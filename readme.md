@@ -185,6 +185,14 @@ It downloads the required providers and puts them into our working directory in 
 
 As well as the providers, it will download and install any modules used.
 
+##### Remote Backend
+
+You will need to run terraform init again after adding the remote backend block to the terraform block. To switch back from backend to local, you must remove the backend block from the terraform block and rerun init with a -migrate-state flag.
+
+```
+terraform init -migrate-state
+```
+
 ##### output
 
 <details>
