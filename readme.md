@@ -7,6 +7,8 @@
 
 ## <u>Basic Template</u>
 
+[Terraform Documentation - AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+
 File named main.tf
 
 ```
@@ -30,6 +32,8 @@ resource "aws_instance" "example" {
 ```
 
 ## <u>Remote Backend</u>
+
+[Terraform Documentation - Remote Backend](https://www.terraform.io/language/state/remote-state-data)
 
 To setup Terraform with remote backend, you will need to create a s3 bucket and a dynamodb. After creating these resources, either manually or via terraform, you can enabled the remote backend in the terraform block.
 
@@ -153,6 +157,8 @@ resource "aws_dynamodb_table" "terraform_locks" {
 
 ## <u>Resource Block</u>
 
+[Terraform Documentation - Resource](https://www.terraform.io/language/resources/syntax)
+
 Resource blocks are used to create a service in aws.
 
 Example template:
@@ -238,6 +244,8 @@ resource "aws_db_instance" "db_instance" {
 
 ## <u>Data Block</u>
 
+[Terraform Documentation - Data](https://www.terraform.io/language/data-sources)
+
 Data blocks are used to access a pre-existing service in aws.
 
 Example template:
@@ -281,12 +289,92 @@ Practical Examples from Webapp folder source code:
   ```
 </details>
 
+## <u>Variables</U>
 
+[Terraform Documentation - Variables](https://www.terraform.io/language/values/variables)
 
+Variables can be created anywhere in the .tf file. Some of their common properties are 'description', 'type' and 'default'. 
 
+Valid primitive types are:
+* string
+* number
+* bool
 
+More complex variable types are listen in [documentation](https://www.terraform.io/language/values/variables)
+
+variable template:
+
+```
+variable "VARIABLE_NAME" {
+  description = "Desc of variable"
+  type        = DATA_TYPE #data type stored
+  default     = "DEFAULT_VALUE"
+}
+```
+
+They can also be declared locally with the 'locals' block
+
+```
+locals {
+  VARIABLE_NAME = "VARIABLE_VALUE"
+  VARIABLE_NAME2 = "VARIABLE_VALUE2"
+}
+```
+
+Outputs are bits of information you can output at the end of a plan or apply command. The following command would get the ip address of a RDS database that was created:
+
+```
+output "db_instance_addr" {
+  value = aws_db_instance.db_instance.address
+}
+```
+
+### Using Variables ###
+
+To use the variables, we need to give them values. There are multiple ways of giving a variable a value. One way is manually during plan and apply. Any variable without a default value will ask for its value during the plan/apply command is ran. Another way to give it a value is just using the default value listed before.
+
+You can use enviroment variables to give your terraform variable a value. Just prefix the enviroment variable with TF_VAR_\<name\>. 
+
+You can also provide a file or the variables through the CLI commands.
+Example:
+```
+terraform apply -var="db_user=foo" -var="db_pass=foobarboofar" -var-file="path/to/file"
+```
+
+Terraform also automatically looks for a terraform.tfvars file in root. You can list values for variables in here:
+
+<details>
+	<summary>
+		<b>Example of terraform.tfvars:</b>
+	</summary>
+
+  ```
+  ami           = "ami-04505e74c0741db8d" # Canonical, Ubuntu, 20.04 LTS, amd64 focal image build on 2021-11-29
+  instance_name = "hello-world"
+  instance_type = "t2.micro"
+  region        = "us-east-1"
+
+  domain    = "vinajeras.com"
+  subdomain = "terraform.vinajeras.com"
+
+  db_name = "mydb"
+  db_user = "foo"
+  ```
+</details>
+
+### Referring Variables
+
+```
+> for variables
+var.VAR_NAME
+
+> for local
+local.VAR_NAME
+```
 
 ## <u>Commands</u>
+
+[Terraform Documentation - CLI](https://www.terraform.io/cli)
 
 #### AWS Configure
 
@@ -312,7 +400,7 @@ Default output format [None]: json
 #### Terraform Initilization
 
 ```
-terraforn init
+terraform init
 ```
 
 Initializes the enviroment to use terraform.
