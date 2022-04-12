@@ -1,7 +1,5 @@
 # Notes
 
----
-
 ## <u>Setup</u>
 
 -   Install aws cli
@@ -150,6 +148,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
 ```
 
 </details>
+
 ## <u>Commands</u>
 
 #### AWS Configure
@@ -173,7 +172,7 @@ Default output format [None]: json
 
 ---
 
-#### Terraform initilization
+#### Terraform Initilization
 
 ```
 terraforn init
