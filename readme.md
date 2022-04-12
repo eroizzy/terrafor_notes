@@ -90,7 +90,9 @@ resource "aws_dynamodb_table" "terraform_locks" {
 ```
 
 </details>
+
 <br>
+
 <details>
 	<summary>
 		<b>Example of backend resource usage:</b>
@@ -148,6 +150,141 @@ resource "aws_dynamodb_table" "terraform_locks" {
 ```
 
 </details>
+
+## <u>Resource Block</u>
+
+Resource blocks are used to create a service in aws.
+
+Example template:
+
+```
+resource "AWS_SERVICE" "NAME" {
+  ## properties of AWS_SERVICE
+}
+```
+
+Practical Examples from Webapp folder source code:
+
+<details>
+	<summary>
+		<b>Example of instance:</b>
+	</summary>
+
+```
+resource "aws_instance" "instance_1" {
+  ami               = "ami-04505e74c0741db8d" # Canonical, Ubuntu, 20.04 LTS, amd64 focal image build on 2021-11-29
+  instance_type     = "t2.micro"
+  availability_zone = "us-east-1b"
+  security_groups   = [aws_security_group.instances.name]
+  user_data         = <<-EOF
+    #!/bin/bash
+    echo "hello world 1" > index.html
+    python3 -m http.server 8080 &
+    EOF
+}
+```
+
+</details>
+
+<details>
+	<summary>
+		<b>Example of bucket:</b>
+	</summary>
+
+```
+resource "aws_s3_bucket" "bucket" {
+  bucket        = "eroizzy-webapp-data"
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "ssec" {
+  bucket = aws_s3_bucket.bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "s3_bv" {
+  bucket = aws_s3_bucket.bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+```
+</details>
+<details>
+	<summary>
+		<b>Example of RDB:</b>
+	</summary>
+
+  ```
+resource "aws_db_instance" "db_instance" {
+  allocated_storage   = 20
+  storage_type        = "standard"
+  engine              = "mariadb"
+  engine_version      = "10.6.7"
+  instance_class      = "db.t3.micro"
+  db_name             = "mydb"
+  username            = "foo"
+  password            = "floobarbaz" # Constraints: At least 8 printable ASCII characters. Can't contain any of the following: / (slash), '(single quote), "(double quote) and @ (at sign).
+  skip_final_snapshot = true
+}
+  ```
+</details>
+
+
+## <u>Data Block</u>
+
+Data blocks are used to access a pre-existing service in aws.
+
+Example template:
+
+```
+data "AWS_SERVICE" "NAME" {
+  ## properties of AWS_SERVICE
+}
+```
+
+Practical Examples from Webapp folder source code:
+
+<details>
+	<summary>
+		<b>Example of Route53 zone:</b>
+	</summary>
+
+  ```
+  data "aws_route53_zone" "primary" {
+    name = "vinajeras.com"
+  }
+  ```
+</details>
+
+<details>
+	<summary>
+		<b>Example of VPC and Subnets:</b>
+	</summary>
+
+  ```
+  data "aws_vpc" "default_vpc" {
+    default = true
+  }
+
+  data "aws_subnets" "default_subnet" {
+    filter {
+      name   = "vpc-id"
+      values = [data.aws_vpc.default_vpc.id]
+    }
+  }
+  ```
+</details>
+
+
+
+
+
 
 ## <u>Commands</u>
 
